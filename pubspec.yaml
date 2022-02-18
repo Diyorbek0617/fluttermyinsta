@@ -1,0 +1,50 @@
+name: fluttermyinsta
+description: A new Flutter project.
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.07.0 <3.0.0"
+
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+
+
+  cupertino_icons: ^1.0.2
+  image_picker: ^0.6.6+5
+  fluttertoast: 7.1.1
+  flutter_icons: 1.1.0
+  cached_network_image: ^2.5.0
+  shared_preferences: 0.5.12
+  firebase_core: 0.4.4
+  firebase_auth: 0.16.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+
+  flutter_lints: ^1.0.0
+
+flutter:
+
+
+  uses-material-design: true
+
+
+  assets:
+    - assets/images/
+  #   - images/a_dot_ham.jpeg
+
+
+  fonts:
+    - family: Billabong
+      fonts:
+        - asset: assets/fonts/Billabong.ttf
+
+    - family: Nottingsam_Demo
+      fonts:
+        - asset: assets/fonts/Nottingsam_Demo.ttf
