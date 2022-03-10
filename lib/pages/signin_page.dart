@@ -4,7 +4,7 @@ import 'package:fluttermyinsta/pages/home_page.dart';
 import 'package:fluttermyinsta/pages/signup_page.dart';
 import 'package:fluttermyinsta/services/auth_service.dart';
 import 'package:fluttermyinsta/services/prefs_service.dart';
-import 'package:fluttermyinsta/untills.dart';
+import 'package:fluttermyinsta/services/untills.dart';
 
 class Signin_page extends StatefulWidget {
   const Signin_page({Key key}) : super(key: key);
@@ -15,37 +15,42 @@ class Signin_page extends StatefulWidget {
 }
 
 class _Signin_pageState extends State<Signin_page> {
-  bool isloading=false;
+  bool isloading = false;
   var emailcontroller = TextEditingController();
   var passwordcontroller = TextEditingController();
-  _dosign_in(){
-    String email=emailcontroller.text.toString().trim();
-    String password=passwordcontroller.text.toString().trim();
-    if(email.isEmpty|| password.isEmpty)return;
+  _dosign_in() {
+    String email = emailcontroller.text.toString().trim();
+    String password = passwordcontroller.text.toString().trim();
+    if (email.isEmpty || password.isEmpty) return;
     setState(() {
-      isloading=true;
+      isloading = true;
     });
-    AuthService.signInUser(context, email, password).then((firebaseUser) => {
-      _getfirebaseUser(firebaseUser),
-    });
-
+    AuthService.signInUser(context, email, password).then((value) => {
+          _getfirebaseUser(value),
+        });
   }
-  _getfirebaseUser(FirebaseUser firebaseUser)async{
+
+  _getfirebaseUser(Map<String, FirebaseUser >map ) async {
     setState(() {
-      isloading=false;
+      isloading = false;
     });
-    if(firebaseUser!=null){
+    FirebaseUser firebaseUser;
+    if (!map.containsKey("SUCCES")) {
+      if (map.containsKey("ERROR_EMAIL_ALREADY_IN_USE")) {
+        Utils.fireToast("Email already in user");
+      }
+      if (map.containsKey("ERROR")) {
+        Utils.fireToast("Check email or password");
+      }
+    }
+    firebaseUser =map["SUCCESS"];
+    if (firebaseUser != null) {
+      print(map);
       await Prefs.saveUserId(firebaseUser.uid);
       Navigator.pushReplacementNamed(context, Home_page.id);
+    } else {
+      Utils.fireToast("Check your email or password");
     }
-    else{
-      Utils.fireToast("Check your email or pssword");
-    }
-  }
-
-
-  _callHomePage(){
-    Navigator.pushReplacementNamed(context, Home_page.id);
   }
 
   @override
@@ -157,7 +162,8 @@ class _Signin_pageState extends State<Signin_page> {
                             child: Center(
                                 child: Text(
                               "Sign in",
-                              style: TextStyle(color: Colors.white, fontSize: 17),
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 17),
                             )),
                           ),
                         ),
@@ -193,13 +199,13 @@ class _Signin_pageState extends State<Signin_page> {
                   ),
                 ],
               ),
-              isloading?
-              Center(
-                child: CircularProgressIndicator(),
-              ):SizedBox.shrink(),
+              isloading
+                  ? Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : SizedBox.shrink(),
             ],
           ),
-
         ),
       ),
     );

@@ -4,7 +4,7 @@ description: A new Flutter project.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.07.0 <3.0.0"
+  sdk: ">=2.11.0 <3.0.0"
 
 
 dependencies:
@@ -15,12 +15,15 @@ dependencies:
 
   cupertino_icons: ^1.0.2
   image_picker: ^0.6.6+5
-  fluttertoast: 7.1.1
   flutter_icons: 1.1.0
   cached_network_image: ^2.5.0
+  fluttertoast: 7.1.1
   shared_preferences: 0.5.12
   firebase_core: 0.4.4
   firebase_auth: 0.16.0
+  firebase_storage: 3.1.6
+  cloud_firestore: 0.13.5
+
 
 dev_dependencies:
   flutter_test:

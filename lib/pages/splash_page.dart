@@ -12,20 +12,23 @@ class Splash_page extends StatefulWidget {
 }
 
 class _Splash_pageState extends State<Splash_page> {
-  initTimer(){
-    Timer(Duration(seconds: 2), (){
+  initTimer() {
+    Timer(Duration(seconds: 2), () {
       callSinglepage();
     });
   }
-  callSinglepage(){
+
+  callSinglepage() {
     Navigator.pushReplacementNamed(context, Signin_page.id);
   }
-   @override
+
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
     initTimer();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,9 +60,14 @@ class _Splash_pageState extends State<Splash_page> {
             ),
             Text(
               "All right resered",
-              style: TextStyle(color: Colors.white54, fontSize: 14,fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  color: Colors.white54,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 20,),
+            SizedBox(
+              height: 20,
+            ),
           ],
         ),
       ),

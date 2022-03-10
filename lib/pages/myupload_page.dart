@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:fluttermyinsta/untills.dart';
+import 'package:fluttermyinsta/services/untills.dart';
 import "package:image_picker/image_picker.dart" show ImagePicker, ImageSource;
 
 class Myupoad_page extends StatefulWidget {
- // const Myupoad_page({Key key}) : super(key: key);
+  // const Myupoad_page({Key key}) : super(key: key);
   static const String id = "myupload_page";
   PageController pageController;
   Myupoad_page({this.pageController});
@@ -13,7 +13,6 @@ class Myupoad_page extends StatefulWidget {
 }
 
 File _image;
-
 
 class _Myupoad_pageState extends State<Myupoad_page> {
   var captioncontroller = TextEditingController();
@@ -85,10 +84,11 @@ class _Myupoad_pageState extends State<Myupoad_page> {
         actions: [
           IconButton(
             onPressed: () {
-              if(_image!=null&&captioncontroller!=null){
-
-                widget.pageController.animateToPage(0, duration: Duration(milliseconds: 200), curve: Curves.easeIn);
-              }else{
+              if (_image != null && captioncontroller != null) {
+                widget.pageController.animateToPage(0,
+                    duration: Duration(milliseconds: 200),
+                    curve: Curves.easeIn);
+              } else {
                 Utils.fireToast("rasm va izoh bo'sh bo'lmasligi kerak!");
               }
             },
@@ -112,17 +112,17 @@ class _Myupoad_pageState extends State<Myupoad_page> {
                   color: Color.fromRGBO(245, 96, 64, 1).withOpacity(0.3),
                   child: _image == null
                       ? GestureDetector(
-                    onTap: (){
-                      _showPicker(context);
-                    },
-                        child: Center(
-                          child: Icon(
+                          onTap: () {
+                            _showPicker(context);
+                          },
+                          child: Center(
+                            child: Icon(
                               Icons.add_a_photo,
                               color: Colors.grey.shade900,
                               size: 60,
                             ),
-                        ),
-                      )
+                          ),
+                        )
                       : Stack(
                           children: [
                             // Added photo

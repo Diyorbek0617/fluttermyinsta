@@ -15,14 +15,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget _strartPage(){
+    Widget _strartPage() {
       return StreamBuilder<FirebaseUser>(
         stream: FirebaseAuth.instance.onAuthStateChanged,
-        builder: (BuildContext context,snapshot){
-          if(snapshot.hasData){
+        builder: (BuildContext context, snapshot) {
+          if (snapshot.hasData) {
             Prefs.saveUserId(snapshot.data.uid);
             return Home_page();
-          }else{
+          } else {
             Prefs.removeUserId();
             return Signin_page();
           }
@@ -37,14 +37,13 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home:_strartPage(),
+      home: _strartPage(),
       routes: {
-        Splash_page.id:(context)=>Splash_page(),
-        Signin_page.id:(context)=>Signin_page(),
-        Signup_page.id:(context)=>Signup_page(),
-        Home_page.id:(context)=>Home_page(),
+        Splash_page.id: (context) => Splash_page(),
+        Signin_page.id: (context) => Signin_page(),
+        Signup_page.id: (context) => Signup_page(),
+        Home_page.id: (context) => Home_page(),
       },
     );
   }
 }
-

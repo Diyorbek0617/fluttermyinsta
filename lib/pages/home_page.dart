@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttermyinsta/pages/my_likes_page.dart';
@@ -7,54 +6,51 @@ import 'package:fluttermyinsta/pages/myfeed_page.dart';
 import 'package:fluttermyinsta/pages/mysearch_page.dart';
 import 'package:fluttermyinsta/pages/myupload_page.dart';
 
-
 class Home_page extends StatefulWidget {
-   Home_page({Key key}) : super(key: key);
-  static final String id="home_page";
+  Home_page({Key key}) : super(key: key);
+  static final String id = "home_page";
 
   @override
   _Home_pageState createState() => _Home_pageState();
 }
 
 class _Home_pageState extends State<Home_page> {
-   int _cureenttab=0;
-   PageController _pageController;
+  int _cureenttab = 0;
+  PageController _pageController;
 
-
-   @override
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _pageController = PageController();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:  PageView(
+      body: PageView(
         controller: _pageController,
-        children:  [
+        children: [
           Myfeed_page(pageController: _pageController),
-          Mysearch_page(),
+          const Mysearch_page(),
           Myupoad_page(pageController: _pageController),
           My_likes_page(),
           My_profile_page(),
-
         ],
-          onPageChanged: (int index){
+        onPageChanged: (int index) {
           setState(() {
-            _cureenttab=index;
+            _cureenttab = index;
           });
-    },
+        },
       ),
       bottomNavigationBar: CupertinoTabBar(
         inactiveColor: Colors.white,
-        backgroundColor:Color.fromRGBO(252, 175, 69, 1),
-        onTap: (int index){
+        backgroundColor: Color.fromRGBO(252, 175, 69, 1),
+        onTap: (int index) {
           setState(() {
-            _cureenttab=index;
-            _pageController.animateToPage(index,duration:Duration(milliseconds: 200),curve: Curves.easeIn);
+            _cureenttab = index;
+            _pageController.animateToPage(index,
+                duration: Duration(milliseconds: 200), curve: Curves.easeIn);
           });
         },
         activeColor: Colors.deepOrange,
