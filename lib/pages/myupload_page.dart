@@ -1,5 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:fluttermyinsta/model/post_model.dart';
+import 'package:fluttermyinsta/services/data_service.dart';
+import 'package:fluttermyinsta/services/file_service.dart';
 import 'package:fluttermyinsta/services/untills.dart';
 import "package:image_picker/image_picker.dart" show ImagePicker, ImageSource;
 
@@ -15,6 +18,7 @@ class Myupoad_page extends StatefulWidget {
 File _image;
 
 class _Myupoad_pageState extends State<Myupoad_page> {
+  bool isLoading = false;
   var captioncontroller = TextEditingController();
 
   _imgFromCamera() async {
@@ -33,6 +37,47 @@ class _Myupoad_pageState extends State<Myupoad_page> {
     setState(() {
       _image = image;
     });
+  }
+
+  _uploadnewpost() {
+    String caption = captioncontroller.text.toString().trim();
+    if (caption.isEmpty) return;
+    if (_image == null) return;
+    _apipostimage();
+  }
+
+  void _apipostimage() {
+    setState(() {
+      isLoading=true;
+    });
+    FileService.uploadPostImage(_image).then((downloadurl) => {
+          _respostimage(downloadurl),
+        });
+  }
+
+  void _respostimage(String downloadurl) {
+    String caption = captioncontroller.text.toString().trim();
+    Post post = new Post(caption: caption, img_post: downloadurl);
+    _apistorepost(post);
+  }
+
+  void _apistorepost(Post post) async {
+    Post posted = await DataService.storePost(post);
+    DataService.storeFeed(posted).then((value) => {
+          _movetofeed(),
+        });
+  }
+
+  void _movetofeed() {
+    setState(() {
+      isLoading=false;
+    });
+    if (_image != null && captioncontroller != null) {
+      widget.pageController.animateToPage(0,
+          duration: Duration(milliseconds: 200), curve: Curves.easeIn);
+    } else {
+      Utils.fireToast("rasm va izoh bo'sh bo'lmasligi kerak!");
+    }
   }
 
   void _showPicker(context) {
@@ -83,100 +128,97 @@ class _Myupoad_pageState extends State<Myupoad_page> {
         ),
         actions: [
           IconButton(
-            onPressed: () {
-              if (_image != null && captioncontroller != null) {
-                widget.pageController.animateToPage(0,
-                    duration: Duration(milliseconds: 200),
-                    curve: Curves.easeIn);
-              } else {
-                Utils.fireToast("rasm va izoh bo'sh bo'lmasligi kerak!");
-              }
-            },
+            onPressed: _uploadnewpost,
             icon: const Icon(Icons.add_a_photo_outlined),
-            color: const Color.fromRGBO(245, 96, 64, 1),
+            color: const  Color.fromRGBO(251, 175, 69, 1),
           ),
         ],
         centerTitle: true,
         elevation: 0,
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            child: Column(
-              children: <Widget>[
-                // choose image
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.width,
-                  color: Color.fromRGBO(245, 96, 64, 1).withOpacity(0.3),
-                  child: _image == null
-                      ? GestureDetector(
-                          onTap: () {
-                            _showPicker(context);
-                          },
-                          child: Center(
-                            child: Icon(
-                              Icons.add_a_photo,
-                              color: Colors.grey.shade900,
-                              size: 60,
-                            ),
-                          ),
-                        )
-                      : Stack(
-                          children: [
-                            // Added photo
-                            Container(
-                              height: double.infinity,
-                              width: double.infinity,
-                              child: Image.file(
-                                _image,
-                                fit: BoxFit.cover,
+      body: Stack(
+        children: [
+          SafeArea(
+            child: SingleChildScrollView(
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  children: <Widget>[
+                    // choose image
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.width,
+                      color: Color.fromRGBO(251, 175, 69, 1).withOpacity(0.3),
+                      child: _image == null
+                          ? GestureDetector(
+                              onTap: () {
+                                _showPicker(context);
+                              },
+                              child: Center(
+                                child: Icon(
+                                  Icons.drive_folder_upload_outlined,
+                                  color:  Color.fromRGBO(251, 175, 69, 1),
+                                  size: 60,
+                                ),
                               ),
-                            ),
+                            )
+                          : Stack(
+                              children: [
+                                // Added photo
+                                Container(
+                                  height: double.infinity,
+                                  width: double.infinity,
+                                  child: Image.file(
+                                    _image,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
 
-                            Container(
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: Colors.black12.withOpacity(0.2),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  IconButton(
-                                      icon: Icon(
-                                        Icons.highlight_remove,
-                                        color: Colors.white,
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                          _image = null;
-                                        });
-                                      }),
-                                ],
-                              ),
+                                Container(
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    color: Colors.black12.withOpacity(0.2),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      IconButton(
+                                          icon: Icon(
+                                            Icons.highlight_remove,
+                                            color: Colors.white,
+                                          ),
+                                          onPressed: () {
+                                            setState(() {
+                                              _image = null;
+                                            });
+                                          }),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                ),
-
-                // #add caption
-                Container(
-                  margin: const EdgeInsets.only(left: 20, right: 20, top: 30),
-                  child: TextField(
-                    keyboardType: TextInputType.multiline,
-                    decoration: InputDecoration(
-                      hintText: "Caption",
-                      hintStyle: TextStyle(color: Colors.black26, fontSize: 17),
                     ),
-                    maxLines: null,
-                    controller: captioncontroller,
-                  ),
+
+                    // #add caption
+                    Container(
+                      margin: const EdgeInsets.only(left: 20, right: 20, top: 30),
+                      child: TextField(
+                        keyboardType: TextInputType.multiline,
+                        decoration: InputDecoration(
+                          hintText: "Caption",
+                          hintStyle: TextStyle(color: Colors.black26, fontSize: 17),
+                        ),
+                        maxLines: null,
+                        controller: captioncontroller,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
+          isLoading?Center(child: CircularProgressIndicator(),):SizedBox.shrink(),
+        ],
       ),
     );
   }

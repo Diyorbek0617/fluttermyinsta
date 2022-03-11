@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:fluttermyinsta/model/post_model.dart';
+import 'package:fluttermyinsta/services/data_service.dart';
 
 class Myfeed_page extends StatefulWidget {
   // const Myfeed_page({Key key}) : super(key: key);
@@ -15,16 +16,23 @@ class Myfeed_page extends StatefulWidget {
 class _Myfeed_pageState extends State<Myfeed_page> {
   List<Post> items = new List();
   bool isloading = false;
-  String img1 =
-      "https://firebasestorage.googleapis.com/v0/b/koreanguideway.appspot.com/o/develop%2Fpost.png?alt=media&token=f0b1ba56-4bf4-4df2-9f43-6b8665cdc964";
-  String img2 =
-      "https://firebasestorage.googleapis.com/v0/b/koreanguideway.appspot.com/o/develop%2Fpost2.png?alt=media&token=ac0c131a-4e9e-40c0-a75a-88e586b28b72";
+  void _apiloadfeeds() {
+    DataService.loadFeeds().then((value) => {
+          _resloadfeed(value),
+        });
+  }
+
+  void _resloadfeed(List<Post> posts) {
+    setState(() {
+      items = posts;
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    items.add(Post(img_post: img1, caption: "Discover more geat images"));
-    items.add(Post(img_post: img2, caption: "Discover more geat images"));
+    _apiloadfeeds();
   }
 
   @override
@@ -49,11 +57,11 @@ class _Myfeed_pageState extends State<Myfeed_page> {
                   duration: Duration(milliseconds: 200), curve: Curves.easeIn);
             },
             icon: Icon(Icons.camera_alt),
-            color: Colors.grey,
+            color: Color.fromRGBO(251, 175, 69, 1),
           ),
         ],
       ),
-      body: ListView.builder(
+      body:ListView.builder(
         itemCount: items.length,
         itemBuilder: (context, index) {
           return _itemsofPost(items[index]);
@@ -92,13 +100,13 @@ class _Myfeed_pageState extends State<Myfeed_page> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Username",
+                            post.fullname,
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black),
                           ),
                           Text(
-                            "February 16, 2022",
+                            post.date,
                             style: TextStyle(fontWeight: FontWeight.normal),
                           )
                         ],
@@ -111,12 +119,15 @@ class _Myfeed_pageState extends State<Myfeed_page> {
                   ),
                 ],
               )),
-          // Image.network(post.postImage,fit: BoxFit.cover,),
           Center(
             child: CachedNetworkImage(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.width,
               imageUrl: post.img_post,
-              placeholder: (context, url) => CircularProgressIndicator(),
+              placeholder: (context, url) =>
+                  Center(child: CircularProgressIndicator()),
               errorWidget: (context, url, error) => Icon(Icons.error),
+              fit: BoxFit.cover,
             ),
           ),
           Row(
@@ -130,7 +141,7 @@ class _Myfeed_pageState extends State<Myfeed_page> {
                   ),
                   IconButton(
                     onPressed: () {},
-                    icon: Icon(FontAwesome.send),
+                    icon: Icon(Icons.share_outlined),
                   ),
                 ],
               ),

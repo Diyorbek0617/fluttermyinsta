@@ -24,10 +24,7 @@ class _My_profile_pageState extends State<My_profile_page> {
   String fullname = "", email = "", img_url = "";
   File _image;
   List<Post> items = new List();
-  String img1 =
-      "https://firebasestorage.googleapis.com/v0/b/koreanguideway.appspot.com/o/develop%2Fpost.png?alt=media&token=f0b1ba56-4bf4-4df2-9f43-6b8665cdc964";
-  String img2 =
-      "https://firebasestorage.googleapis.com/v0/b/koreanguideway.appspot.com/o/develop%2Fpost2.png?alt=media&token=ac0c131a-4e9e-40c0-a75a-88e586b28b72";
+  int count_posts=0;
   @override
   _imgFromCamera() async {
     File image = await ImagePicker.pickImage(
@@ -127,20 +124,23 @@ class _My_profile_pageState extends State<My_profile_page> {
     });
   }
 
+  void _apiloadposts(){
+    DataService.loadPosts().then((value){
+      _resloadposts(value);
+    });
+  }
+  void _resloadposts(List<Post>posts){
+    setState(() {
+      items=posts;
+      count_posts =items.length;
+    });
+  }
+
   void initState() {
     // TODO: implement initState
     super.initState();
-    items.add(Post(img_post: img1, caption: "Discover more geat images"));
-    items.add(Post(img_post: img2, caption: "Discover more geat images"));
-    items.add(Post(img_post: img1, caption: "Discover more geat images"));
-    items.add(Post(img_post: img2, caption: "Discover more geat images"));
-    items.add(Post(img_post: img1, caption: "Discover more geat images"));
-    items.add(Post(img_post: img2, caption: "Discover more geat images"));
-    items.add(Post(img_post: img1, caption: "Discover more geat images"));
-    items.add(Post(img_post: img2, caption: "Discover more geat images"));
-    items.add(Post(img_post: img1, caption: "Discover more geat images"));
-    items.add(Post(img_post: img2, caption: "Discover more geat images"));
     _apiLoadUser();
+    _apiloadposts();
   }
 
   @override
@@ -163,7 +163,7 @@ class _My_profile_pageState extends State<My_profile_page> {
             },
             icon: Icon(
               Icons.exit_to_app_outlined,
-              color: Colors.grey,
+              color:  Color.fromRGBO(251, 175, 69, 1),
             ),
           ),
         ],
@@ -259,7 +259,7 @@ class _My_profile_pageState extends State<My_profile_page> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                "675",
+                                count_posts.toString(),
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 16,
@@ -412,7 +412,7 @@ class _My_profile_pageState extends State<My_profile_page> {
               width: MediaQuery.of(context).size.width,
               imageUrl: post.img_post,
               fit: BoxFit.cover,
-              placeholder: (context, url) => CircularProgressIndicator(),
+              placeholder: (context, url) => Center(child: CircularProgressIndicator()),
               errorWidget: (context, url, error) => Icon(Icons.error),
             ),
           ),

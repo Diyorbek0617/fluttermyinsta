@@ -32,7 +32,7 @@ class _Home_pageState extends State<Home_page> {
         controller: _pageController,
         children: [
           Myfeed_page(pageController: _pageController),
-          const Mysearch_page(),
+           Mysearch_page(),
           Myupoad_page(pageController: _pageController),
           My_likes_page(),
           My_profile_page(),

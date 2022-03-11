@@ -5,6 +5,7 @@ class Post {
   String id = '';
   String img_post = '';
   String caption = '';
+  String date;
 
   Post({
     this.img_post,
@@ -17,6 +18,7 @@ class Post {
         img_user = json['img_user'],
         img_post = json['img_post'],
         id = json['id'],
+        date = json['date'],
         caption = json['caption'];
 
   Map<String, dynamic> toJson() => {
@@ -25,6 +27,7 @@ class Post {
         'img_user': img_user,
         'id': id,
         'img_post': img_post,
+        'date': date,
         'caption': caption,
       };
 }
