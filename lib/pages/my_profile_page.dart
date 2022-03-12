@@ -22,9 +22,9 @@ class _My_profile_pageState extends State<My_profile_page> {
   bool iscorrect = false;
   bool isLoading = false;
   String fullname = "", email = "", img_url = "";
+  int count_posts=0, count_followers=0,count_following=0;
   File _image;
   List<Post> items = new List();
-  int count_posts=0;
   @override
   _imgFromCamera() async {
     File image = await ImagePicker.pickImage(
@@ -98,6 +98,8 @@ class _My_profile_pageState extends State<My_profile_page> {
       this.fullname = user.fullname;
       this.email = user.email;
       this.img_url = user.img_url;
+      this.count_followers=user.fallowers_count;
+      this.count_following=user.fallowing_count;
     });
   }
 
@@ -290,7 +292,7 @@ class _My_profile_pageState extends State<My_profile_page> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                "4.562",
+                                count_followers.toString(),
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 16,
@@ -321,7 +323,7 @@ class _My_profile_pageState extends State<My_profile_page> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                "897",
+                                count_following.toString(),
                                 style: TextStyle(
                                     color: Colors.black,
                                     fontSize: 16,

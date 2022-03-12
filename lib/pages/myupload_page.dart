@@ -41,14 +41,16 @@ class _Myupoad_pageState extends State<Myupoad_page> {
 
   _uploadnewpost() {
     String caption = captioncontroller.text.toString().trim();
-    if (caption.isEmpty) return;
-    if (_image == null) return;
-    _apipostimage();
+    if (_image != null && caption != null) {
+      _apipostimage();
+    } else {
+      Utils.fireToast("rasm va izoh bo'sh bo'lmasligi kerak!");
+    }
   }
 
   void _apipostimage() {
     setState(() {
-      isLoading=true;
+      isLoading = true;
     });
     FileService.uploadPostImage(_image).then((downloadurl) => {
           _respostimage(downloadurl),
@@ -70,14 +72,13 @@ class _Myupoad_pageState extends State<Myupoad_page> {
 
   void _movetofeed() {
     setState(() {
-      isLoading=false;
+      isLoading = false;
     });
-    if (_image != null && captioncontroller != null) {
-      widget.pageController.animateToPage(0,
-          duration: Duration(milliseconds: 200), curve: Curves.easeIn);
-    } else {
-      Utils.fireToast("rasm va izoh bo'sh bo'lmasligi kerak!");
-    }
+    widget.pageController.animateToPage(0,
+        duration: Duration(milliseconds: 200), curve: Curves.easeIn);
+    _image=null;
+   captioncontroller.text="";
+
   }
 
   void _showPicker(context) {
@@ -129,8 +130,8 @@ class _Myupoad_pageState extends State<Myupoad_page> {
         actions: [
           IconButton(
             onPressed: _uploadnewpost,
-            icon: const Icon(Icons.add_a_photo_outlined),
-            color: const  Color.fromRGBO(251, 175, 69, 1),
+           icon:Icon( Icons.drive_folder_upload_outlined),
+            color: const Color.fromRGBO(251, 175, 69, 1),
           ),
         ],
         centerTitle: true,
@@ -156,8 +157,8 @@ class _Myupoad_pageState extends State<Myupoad_page> {
                               },
                               child: Center(
                                 child: Icon(
-                                  Icons.drive_folder_upload_outlined,
-                                  color:  Color.fromRGBO(251, 175, 69, 1),
+                                    Icons.add_a_photo_outlined,
+                                  color: Color.fromRGBO(251, 175, 69, 1),
                                   size: 60,
                                 ),
                               ),
@@ -201,12 +202,14 @@ class _Myupoad_pageState extends State<Myupoad_page> {
 
                     // #add caption
                     Container(
-                      margin: const EdgeInsets.only(left: 20, right: 20, top: 30),
+                      margin:
+                          const EdgeInsets.only(left: 20, right: 20, top: 30),
                       child: TextField(
                         keyboardType: TextInputType.multiline,
                         decoration: InputDecoration(
                           hintText: "Caption",
-                          hintStyle: TextStyle(color: Colors.black26, fontSize: 17),
+                          hintStyle:
+                              TextStyle(color: Colors.black26, fontSize: 17),
                         ),
                         maxLines: null,
                         controller: captioncontroller,
@@ -217,7 +220,11 @@ class _Myupoad_pageState extends State<Myupoad_page> {
               ),
             ),
           ),
-          isLoading?Center(child: CircularProgressIndicator(),):SizedBox.shrink(),
+          isLoading
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : SizedBox.shrink(),
         ],
       ),
     );

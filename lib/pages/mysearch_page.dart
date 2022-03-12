@@ -12,22 +12,48 @@ class Mysearch_page extends StatefulWidget {
 
 class _Mysearch_pageState extends State<Mysearch_page> {
   var searchcontroller = TextEditingController();
-  bool isLoading=false;
+  bool isLoading = false;
   List<User> items = List();
-void _apisearchuser(String keyword){
-  setState(() {
-    isLoading=true;
-  });
-  DataService.searchUsers(keyword).then((users) => {
-    _ressearchusers(users),
-  });
-}
-void _ressearchusers(List<User>users){
-  setState(() {
-    items=users;
-    isLoading=false;
-  });
-}
+  void _apisearchuser(String keyword) {
+    setState(() {
+      isLoading = true;
+    });
+    DataService.searchUsers(keyword).then((users) => {
+          _ressearchusers(users),
+        });
+  }
+
+  void _ressearchusers(List<User> users) {
+    setState(() {
+      items = users;
+      isLoading = false;
+    });
+  }
+
+  void _apifallowuser(User someone) async {
+    setState(() {
+      isLoading = true;
+    });
+    await DataService.fallowUser(someone);
+    setState(() {
+      someone.fallowed = true;
+      isLoading = false;
+    });
+    DataService.storePostsToMyFeed(someone);
+  }
+
+  void _apiunfallowuser(User someone) async {
+    setState(() {
+      isLoading = true;
+    });
+    await DataService.unfallowUser(someone);
+    setState(() {
+      someone.fallowed = false;
+      isLoading = false;
+    });
+    DataService.removePostsFromMyFeed(someone);
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -42,7 +68,7 @@ void _ressearchusers(List<User>users){
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title:Text(
+        title: Text(
           "Search",
           style: TextStyle(
               color: Colors.black, fontFamily: "Billabong", fontSize: 25),
@@ -75,7 +101,7 @@ void _ressearchusers(List<User>users){
                         color: Colors.grey,
                       ),
                     ),
-                    onChanged: (input){
+                    onChanged: (input) {
                       _apisearchuser(input);
                     },
                   ),
@@ -91,7 +117,11 @@ void _ressearchusers(List<User>users){
               ],
             ),
           ),
-          isLoading? Center(child: CircularProgressIndicator(),):SizedBox.shrink(),
+          isLoading
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : SizedBox.shrink(),
         ],
       ),
     );
@@ -112,17 +142,19 @@ void _ressearchusers(List<User>users){
                 )),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(40),
-              child:user.img_url.isEmpty? Image(
-                image: AssetImage("assets/images/ic_person.png"),
-                height: 40,
-                width: 40,
-                fit: BoxFit.cover,
-              ):Image.network(
-                user.img_url,
-                width: 40,
-                height: 40,
-                fit: BoxFit.cover,
-              ),
+              child: user.img_url.isEmpty
+                  ? Image(
+                      image: AssetImage("assets/images/ic_person.png"),
+                      height: 40,
+                      width: 40,
+                      fit: BoxFit.cover,
+                    )
+                  : Image.network(
+                      user.img_url,
+                      width: 40,
+                      height: 40,
+                      fit: BoxFit.cover,
+                    ),
             ),
           ),
           SizedBox(
@@ -152,21 +184,30 @@ void _ressearchusers(List<User>users){
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Container(
-                  width: 80,
-                  height: 30,
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(3),
-                    border: Border.all(
-                      width: 1,
-                      color: Colors.grey,
+                GestureDetector(
+                  onTap: () {
+                    if (user.fallowed) {
+                      _apiunfallowuser(user);
+                    } else {
+                      _apifallowuser(user);
+                    }
+                  },
+                  child: Container(
+                    width: 80,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(3),
+                      border: Border.all(
+                        width: 1,
+                        color: Colors.grey,
+                      ),
                     ),
-                  ),
-                  child: Center(
-                    child: Text(
-                      "Fallow",
-                      style: TextStyle(color: Colors.white, fontSize: 13),
+                    child: Center(
+                      child: Text(
+                        user.fallowed ? "Fallow" : "Fallowing",
+                        style: TextStyle(color: Colors.white, fontSize: 13),
+                      ),
                     ),
                   ),
                 )

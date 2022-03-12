@@ -28,6 +28,28 @@ class _Myfeed_pageState extends State<Myfeed_page> {
     });
   }
 
+  void _apipostlike(Post post) async {
+    setState(() {
+      isloading = true;
+    });
+    await DataService.likePost(post, true);
+    setState(() {
+      isloading = false;
+      post.liked = true;
+    });
+  }
+
+  void _apipostunlike(Post post) async {
+    setState(() {
+      isloading = true;
+    });
+    await DataService.likePost(post, false);
+    setState(() {
+      isloading = false;
+      post.liked = false;
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -61,11 +83,25 @@ class _Myfeed_pageState extends State<Myfeed_page> {
           ),
         ],
       ),
-      body:ListView.builder(
-        itemCount: items.length,
-        itemBuilder: (context, index) {
-          return _itemsofPost(items[index]);
-        },
+      body: Stack(
+        children: [
+          items.length > 0
+              ? ListView.builder(
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    return _itemsofPost(items[
+                        index]); //:Center(child: Text("Feedlar mavjud emas."),);
+                  },
+                )
+              : Center(
+                  child: Text("No feeds"),
+                ),
+          isloading
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : SizedBox.shrink(),
+        ],
       ),
     );
   }
@@ -136,8 +172,21 @@ class _Myfeed_pageState extends State<Myfeed_page> {
               Row(
                 children: [
                   IconButton(
-                    onPressed: () {},
-                    icon: Icon(FontAwesome.heart_o),
+                    onPressed: () {
+                      if (!post.liked) {
+                        _apipostlike(post);
+                      } else {
+                        _apipostunlike(post);
+                      }
+                    },
+                    icon: post.liked
+                        ? Icon(
+                            Icons.favorite,
+                            color: Colors.red,
+                          )
+                        : Icon(
+                            Icons.favorite_border,
+                          ),
                   ),
                   IconButton(
                     onPressed: () {},

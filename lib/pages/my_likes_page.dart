@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:fluttermyinsta/model/post_model.dart';
+import 'package:fluttermyinsta/services/data_service.dart';
 
 class My_likes_page extends StatefulWidget {
   const My_likes_page({Key key}) : super(key: key);
@@ -14,16 +15,36 @@ class My_likes_page extends StatefulWidget {
 class _My_likes_pageState extends State<My_likes_page> {
   List<Post> items = new List();
   bool isloading = false;
-  String img1 =
-      "https://firebasestorage.googleapis.com/v0/b/koreanguideway.appspot.com/o/develop%2Fpost.png?alt=media&token=f0b1ba56-4bf4-4df2-9f43-6b8665cdc964";
-  String img2 =
-      "https://firebasestorage.googleapis.com/v0/b/koreanguideway.appspot.com/o/develop%2Fpost2.png?alt=media&token=ac0c131a-4e9e-40c0-a75a-88e586b28b72";
+
+  void _apiloadLikes() {
+    setState(() {
+      isloading = true;
+    });
+    DataService.loadLikes().then((value) => {
+          _resloadLike(value),
+        });
+  }
+
+  void _resloadLike(List<Post> posts) {
+    setState(() {
+      items = posts;
+      isloading = false;
+    });
+  }
+  void _apipostunlike(Post post) async {
+    setState(() {
+      isloading = true;
+      post.liked = false;
+    });
+    await DataService.likePost(post, false);
+   _apiloadLikes();
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    items.add(Post(img_post: img1, caption: "Discover more geat images"));
-    items.add(Post(img_post: img2, caption: "Discover more geat images"));
+    _apiloadLikes();
   }
 
   @override
@@ -42,11 +63,24 @@ class _My_likes_pageState extends State<My_likes_page> {
         centerTitle: true,
         elevation: 0,
       ),
-      body: ListView.builder(
-        itemCount: items.length,
-        itemBuilder: (context, index) {
-          return _itemsofPost(items[index]);
-        },
+      body: Stack(
+        children: [
+          items.length > 0
+              ? ListView.builder(
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    return _itemsofPost(items[index]);
+                  },
+                )
+              : Center(
+                  child: Text("No liked posts"),
+                ),
+          isloading
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : SizedBox.shrink(),
+        ],
       ),
     );
   }
@@ -81,13 +115,13 @@ class _My_likes_pageState extends State<My_likes_page> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Username",
+                            post.fullname,
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black),
                           ),
                           Text(
-                            "February 16, 2022",
+                            post.date,
                             style: TextStyle(fontWeight: FontWeight.normal),
                           )
                         ],
@@ -114,15 +148,23 @@ class _My_likes_pageState extends State<My_likes_page> {
               Row(
                 children: [
                   IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      FontAwesome.heart,
-                      color: Colors.red,
-                    ),
+                    onPressed: () {
+                      if (post.liked) {
+                        _apipostunlike(post);
+                      }
+                    },
+                    icon: post.liked
+                        ? Icon(
+                            Icons.favorite,
+                            color: Colors.red,
+                          )
+                        : Icon(
+                            Icons.favorite_border,
+                          ),
                   ),
                   IconButton(
                     onPressed: () {},
-                    icon: Icon(FontAwesome.send),
+                    icon: Icon(Icons.share),
                   ),
                 ],
               ),
