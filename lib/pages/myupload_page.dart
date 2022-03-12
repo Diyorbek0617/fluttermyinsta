@@ -210,8 +210,10 @@ class _Myupoad_pageState extends State<Myupoad_page> {
                           hintText: "Caption",
                           hintStyle:
                               TextStyle(color: Colors.black26, fontSize: 17),
+
                         ),
                         maxLines: null,
+                        maxLength: 20,
                         controller: captioncontroller,
                       ),
                     ),

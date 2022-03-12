@@ -73,7 +73,7 @@ class _My_likes_pageState extends State<My_likes_page> {
                   },
                 )
               : Center(
-                  child: Text("No liked posts"),
+                  child: Text("No liked posts",style: TextStyle(color: Colors.black26),),
                 ),
           isloading
               ? Center(

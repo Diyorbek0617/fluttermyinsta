@@ -144,17 +144,17 @@ class _Mysearch_pageState extends State<Mysearch_page> {
               borderRadius: BorderRadius.circular(40),
               child: user.img_url.isEmpty
                   ? Image(
-                      image: AssetImage("assets/images/ic_person.png"),
-                      height: 40,
-                      width: 40,
-                      fit: BoxFit.cover,
-                    )
+                image: AssetImage("assets/images/ic_person.png"),
+                height: 40,
+                width: 40,
+                fit: BoxFit.cover,
+              )
                   : Image.network(
-                      user.img_url,
-                      width: 40,
-                      height: 40,
-                      fit: BoxFit.cover,
-                    ),
+                user.img_url,
+                width: 40,
+                height: 40,
+                fit: BoxFit.cover,
+              ),
             ),
           ),
           SizedBox(
@@ -166,19 +166,19 @@ class _Mysearch_pageState extends State<Mysearch_page> {
             children: [
               Text(
                 user.fullname,
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(fontWeight: FontWeight.bold,fontSize: 11),
               ),
               SizedBox(
                 height: 3,
               ),
               Text(
                 user.email,
-                style: TextStyle(color: Colors.black54, fontSize: 12),
+                style: TextStyle(color: Colors.black54, fontSize: 9),
               ),
             ],
           ),
           SizedBox(
-            width: 6,
+            width: 2,
           ),
           Expanded(
             child: Row(

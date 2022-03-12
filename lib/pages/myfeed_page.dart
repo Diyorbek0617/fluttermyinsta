@@ -90,11 +90,11 @@ class _Myfeed_pageState extends State<Myfeed_page> {
                   itemCount: items.length,
                   itemBuilder: (context, index) {
                     return _itemsofPost(items[
-                        index]); //:Center(child: Text("Feedlar mavjud emas."),);
+                        index]);
                   },
                 )
               : Center(
-                  child: Text("No feeds"),
+                  child: Text("No feeds",style: TextStyle(color: Colors.black26),),
                 ),
           isloading
               ? Center(
@@ -148,11 +148,12 @@ class _Myfeed_pageState extends State<Myfeed_page> {
                         ],
                       )
                     ],
-                  ),
+                  ),post.mine?
                   IconButton(
                     icon: const Icon(SimpleLineIcons.options),
-                    onPressed: () {},
-                  ),
+                    onPressed: () {
+                    },
+                  ):SizedBox.shrink(),
                 ],
               )),
           Center(

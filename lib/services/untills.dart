@@ -19,4 +19,31 @@ class Utils {
         "${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} ${now.hour.toString()}:${now.minute.toString()}";
     return convertedDateTime;
   }
+  // dialog
+  static Future<bool> dialogCommon(BuildContext context, String title, String message, bool isSingle) async {
+    return await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(message),
+            actions: [
+              !isSingle
+                  ? FlatButton(
+                child: Text("Cancel"),
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+              )
+                  : SizedBox.shrink(),
+              FlatButton(
+                child: Text("Confirm"),
+                onPressed: () {
+                  Navigator.of(context).pop(true);
+                },
+              )
+            ],
+          );
+        });
+  }
 }

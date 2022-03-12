@@ -28,15 +28,21 @@ class DataService {
     var value = await firestore.collection(folder_users).document(uid).get();
     User user = User.fromJson(value.data);
 
-    var querySnapshot1= await firestore.collection(folder_users).document(uid).collection(folder_followers).getDocuments();
-    user.fallowers_count =querySnapshot1.documents.length;
+    var querySnapshot1 = await firestore
+        .collection(folder_users)
+        .document(uid)
+        .collection(folder_followers)
+        .getDocuments();
+    user.fallowers_count = querySnapshot1.documents.length;
 
-    var querySnapshot2 = await  firestore.collection(folder_users).document(uid).collection(folder_following).getDocuments();
-    user.fallowing_count=querySnapshot2.documents.length;
-
+    var querySnapshot2 = await firestore
+        .collection(folder_users)
+        .document(uid)
+        .collection(folder_following)
+        .getDocuments();
+    user.fallowing_count = querySnapshot2.documents.length;
 
     return user;
-
   }
 
   static Future updateUser(User user) async {
@@ -61,9 +67,9 @@ class DataService {
     querySnapshot.documents.forEach((user) {
       User newUser = User.fromJson(user.data);
       if (newUser.uid != uid) {
-        //  users.add(newUser);
+        users.add(newUser);
       }
-      users.add(newUser);
+      // users.add(newUser);
     });
     return users;
   }
@@ -115,6 +121,7 @@ class DataService {
         .getDocuments();
     querySnapshot.documents.forEach((result) {
       Post post = Post.fromJson(result.data);
+      if(post.uid==uid) post.mine=true;
       posts.add(post);
     });
     return posts;
@@ -223,12 +230,12 @@ class DataService {
       post.liked = false;
       posts.add(post);
     });
-    for(Post post in posts) {
+    for (Post post in posts) {
       storeFeed(post);
     }
   }
 
-  static Future  removePostsFromMyFeed(User someone)async{
+  static Future removePostsFromMyFeed(User someone) async {
     List<Post> posts = new List();
     var querySnapshot = await firestore
         .collection(folder_users)
@@ -240,12 +247,18 @@ class DataService {
       post.liked = false;
       posts.add(post);
     });
-    for(Post post in posts) {
+    for (Post post in posts) {
       removeFeed(post);
     }
   }
-  static Future removeFeed(Post post)async{
-    String uid= await Prefs.loadUserId();
-    return await firestore.collection(folder_users).document(uid).collection(folder_feeds).document(post.id).delete();
+
+  static Future removeFeed(Post post) async {
+    String uid = await Prefs.loadUserId();
+    return await firestore
+        .collection(folder_users)
+        .document(uid)
+        .collection(folder_feeds)
+        .document(post.id)
+        .delete();
   }
 }

@@ -8,6 +8,7 @@ import 'package:fluttermyinsta/model/user_model.dart';
 import 'package:fluttermyinsta/services/auth_service.dart';
 import 'package:fluttermyinsta/services/data_service.dart';
 import 'package:fluttermyinsta/services/file_service.dart';
+import 'package:fluttermyinsta/services/untills.dart';
 import 'package:image_picker/image_picker.dart';
 
 class My_profile_page extends StatefulWidget {
@@ -133,6 +134,13 @@ class _My_profile_pageState extends State<My_profile_page> {
       count_posts =items.length;
     });
   }
+  _actionlogout(){
+    var result =Utils.dialogCommon(context, "Instagram", "Do you want to log out?", false);
+    if(result!=null && result==true){
+      AuthService.signOutUser(context);
+    }
+
+  }
 
   void initState() {
     // TODO: implement initState
@@ -157,7 +165,8 @@ class _My_profile_pageState extends State<My_profile_page> {
         actions: [
           IconButton(
             onPressed: () {
-              AuthService.signOutUser(context);
+              _actionlogout();
+
             },
             icon: Icon(
               Icons.exit_to_app_outlined,
@@ -366,8 +375,10 @@ class _My_profile_pageState extends State<My_profile_page> {
                     ],
                   ),
                 ),
+                Divider(),
+                SizedBox(height: 1,),
                 Expanded(
-                  child: iscorrect == false
+                  child:items.length<=0?Container(child:Center(child: Text("No Post",style: TextStyle(color: Colors.black26),),),): iscorrect == false
                       ? GridView.builder(
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
@@ -408,6 +419,7 @@ class _My_profile_pageState extends State<My_profile_page> {
           Expanded(
             child: CachedNetworkImage(
               width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.width,
               imageUrl: post.img_post,
               fit: BoxFit.cover,
               placeholder: (context, url) => Center(child: CircularProgressIndicator()),
@@ -419,8 +431,10 @@ class _My_profile_pageState extends State<My_profile_page> {
           ),
           Text(
             post.caption,
-            style: TextStyle(color: Colors.black87, fontSize: 14),
+            style: TextStyle(color: Colors.black87, fontSize: 9),
+            softWrap: true,
           ),
+          Divider(),
         ],
       ),
     );
