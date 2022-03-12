@@ -99,7 +99,6 @@ class _My_profile_pageState extends State<My_profile_page> {
       this.count_following=user.fallowing_count;
     });
   }
-
   void _apichangephoto() {
     if (_image == null) return;
     setState(() {
