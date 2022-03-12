@@ -44,7 +44,6 @@ class _My_profile_pageState extends State<My_profile_page> {
     });
     _apichangephoto();
   }
-
   void _showPicker(context) {
     showModalBottomSheet(
         backgroundColor: Colors.white.withOpacity(0.8),
@@ -80,7 +79,6 @@ class _My_profile_pageState extends State<My_profile_page> {
           );
         });
   }
-
   _apiLoadUser() {
     setState(() {
       isLoading = true;
@@ -91,7 +89,6 @@ class _My_profile_pageState extends State<My_profile_page> {
 
     _apichangephoto();
   }
-
   _showUserInfo(User user) {
     setState(() {
       isLoading = false;
