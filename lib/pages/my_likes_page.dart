@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:fluttermyinsta/model/post_model.dart';
 import 'package:fluttermyinsta/services/data_service.dart';
+import 'package:fluttermyinsta/services/untills.dart';
 
 class My_likes_page extends StatefulWidget {
   const My_likes_page({Key key}) : super(key: key);
@@ -39,6 +40,16 @@ class _My_likes_pageState extends State<My_likes_page> {
     await DataService.likePost(post, false);
    _apiloadLikes();
   }
+  _actionremovepost(Post post)async{
+    var result =await Utils.dialogCommon(context, "Instagram", "Do you want to remove this post?", false);
+    if(result!=null&&result){
+      setState(() {
+        isloading=true;
+      });
+      DataService.removePost(post).then((value) => {
+        _apiloadLikes(),
+      });
+    }}
 
   @override
   void initState() {
@@ -127,11 +138,13 @@ class _My_likes_pageState extends State<My_likes_page> {
                         ],
                       )
                     ],
-                  ),
+                  ), post.mine?
                   IconButton(
                     icon: const Icon(SimpleLineIcons.options),
-                    onPressed: () {},
-                  ),
+                    onPressed: () {
+                      _actionremovepost(post);
+                    },
+                  ):SizedBox.shrink(),
                 ],
               )),
           // Image.network(post.postImage,fit: BoxFit.cover,),
@@ -170,10 +183,13 @@ class _My_likes_pageState extends State<My_likes_page> {
               ),
             ],
           ),
-          Text(
-            post.caption,
-            style: TextStyle(
-                color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15),
+          Container(
+            padding: EdgeInsets.only(left: 8.0),
+            child: Text(
+              post.caption,
+              style: TextStyle(
+                  color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15),
+            ),
           ),
         ],
       ),

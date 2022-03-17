@@ -136,11 +136,22 @@ class _My_profile_pageState extends State<My_profile_page> {
   }
   _actionlogout(){
     var result =Utils.dialogCommon(context, "Instagram", "Do you want to log out?", false);
-    if(result!=null && result==true){
+    if(result!=null){
       AuthService.signOutUser(context);
     }
 
   }
+  Future _actionremovepost(Post post)async{
+    var result = await Utils.dialogCommon(context, "Instagram", "Do you want to remove this post?", false);
+    if(result!=null&& result){
+      setState(() {
+        isLoading=true;
+      });
+      DataService.removePost(post).then((value) => {
+        _apiLoadUser(),
+      });
+    }}
+
 
   void initState() {
     // TODO: implement initState
@@ -412,30 +423,35 @@ class _My_profile_pageState extends State<My_profile_page> {
   }
 
   Widget _itemsofpost(Post post) {
-    return Container(
-      margin: EdgeInsets.all(5),
-      child: Column(
-        children: [
-          Expanded(
-            child: CachedNetworkImage(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.width,
-              imageUrl: post.img_post,
-              fit: BoxFit.cover,
-              placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-              errorWidget: (context, url, error) => Icon(Icons.error),
+    return GestureDetector(
+      onLongPress: (){
+        _actionremovepost(post);
+      },
+      child: Container(
+        margin: EdgeInsets.all(5),
+        child: Column(
+          children: [
+            Expanded(
+              child: CachedNetworkImage(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.width,
+                imageUrl: post.img_post,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                errorWidget: (context, url, error) => Icon(Icons.error),
+              ),
             ),
-          ),
-          SizedBox(
-            height: 4,
-          ),
-          Text(
-            post.caption,
-            style: TextStyle(color: Colors.black87, fontSize: 9),
-            softWrap: true,
-          ),
-          Divider(),
-        ],
+            SizedBox(
+              height: 4,
+            ),
+           iscorrect==false? Text(
+              post.caption,
+              style: TextStyle(color: Colors.black87, fontSize: 9),
+              softWrap: true,
+            ):SizedBox.shrink(),
+            Divider(),
+          ],
+        ),
       ),
     );
   }

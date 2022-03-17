@@ -83,7 +83,7 @@ class _Myupoad_pageState extends State<Myupoad_page> {
 
   void _showPicker(context) {
     showModalBottomSheet(
-        backgroundColor: Color.fromRGBO(245, 96, 64, 1).withOpacity(0.8),
+        backgroundColor: Colors.white.withOpacity(0.8),
         context: context,
         builder: (BuildContext bc) {
           return SafeArea(

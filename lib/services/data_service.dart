@@ -121,7 +121,7 @@ class DataService {
         .getDocuments();
     querySnapshot.documents.forEach((result) {
       Post post = Post.fromJson(result.data);
-      if(post.uid==uid) post.mine=true;
+      if (post.uid == uid) post.mine = true;
       posts.add(post);
     });
     return posts;
@@ -174,7 +174,7 @@ class DataService {
 
     querySnapshot.documents.forEach((result) {
       Post post = Post.fromJson(result.data);
-      // if(uid==post.uid)post.mine=true;
+      if (uid == post.uid) post.mine = true;
       posts.add(post);
     });
     return posts;
@@ -258,6 +258,17 @@ class DataService {
         .collection(folder_users)
         .document(uid)
         .collection(folder_feeds)
+        .document(post.id)
+        .delete();
+  }
+
+  static Future removePost(Post post) async {
+    String uid = await Prefs.loadUserId();
+    await removeFeed(post);
+    return await firestore
+        .collection(folder_users)
+        .document(uid)
+        .collection(folder_posts)
         .document(post.id)
         .delete();
   }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:fluttermyinsta/model/post_model.dart';
 import 'package:fluttermyinsta/services/data_service.dart';
+import 'package:fluttermyinsta/services/untills.dart';
 
 class Myfeed_page extends StatefulWidget {
   // const Myfeed_page({Key key}) : super(key: key);
@@ -49,7 +50,16 @@ class _Myfeed_pageState extends State<Myfeed_page> {
       post.liked = false;
     });
   }
-
+  _actionremovepost(Post post)async{
+    var result =await Utils.dialogCommon(context, "Instagram", "Do you want to remove this post?", false);
+    if(result!=null&& result){
+      setState(() {
+        isloading=true;
+      });
+      DataService.removePost(post).then((value) => {
+        _apiloadfeeds(),
+      });
+  }}
   @override
   void initState() {
     // TODO: implement initState
@@ -152,6 +162,7 @@ class _Myfeed_pageState extends State<Myfeed_page> {
                   IconButton(
                     icon: const Icon(SimpleLineIcons.options),
                     onPressed: () {
+                      _actionremovepost(post);
                     },
                   ):SizedBox.shrink(),
                 ],
@@ -197,10 +208,13 @@ class _Myfeed_pageState extends State<Myfeed_page> {
               ),
             ],
           ),
-          Text(
-            post.caption,
-            style: TextStyle(
-                color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15),
+          Container(
+            padding: EdgeInsets.only(left: 8.0),
+            child: Text(
+              post.caption,
+              style: TextStyle(
+                  color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15),
+            ),
           ),
         ],
       ),
