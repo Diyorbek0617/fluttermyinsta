@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttermyinsta/pages/signin_page.dart';
+import 'package:fluttermyinsta/services/prefs_service.dart';
 
 class Splash_page extends StatefulWidget {
   const Splash_page({Key key}) : super(key: key);
@@ -12,6 +14,7 @@ class Splash_page extends StatefulWidget {
 }
 
 class _Splash_pageState extends State<Splash_page> {
+ // final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   initTimer() {
     Timer(Duration(seconds: 2), () {
       callSinglepage();
@@ -22,11 +25,24 @@ class _Splash_pageState extends State<Splash_page> {
     Navigator.pushReplacementNamed(context, Signin_page.id);
   }
 
+  // _initNotification() {
+  //   _firebaseMessaging.requestNotificationPermissions(const IosNotificationSettings(sound: true, badge: true, alert: true));
+  //   _firebaseMessaging.onIosSettingsRegistered.listen((IosNotificationSettings settings) {
+  //     print("Settings registered: $settings");
+  //   });
+  //   _firebaseMessaging.getToken().then((String token) {
+  //     assert(token != null);
+  //     print(token);
+  //     Prefs.saveFCM(token);
+  //   });
+  // }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     initTimer();
+   // _initNotification();
   }
 
   @override

@@ -205,7 +205,7 @@ class _Mysearch_pageState extends State<Mysearch_page> {
                     ),
                     child: Center(
                       child: Text(
-                        user.fallowed ? "Fallow" : "Fallowing",
+                        user.fallowed ? "Fallowing" : "Fallow",
                         style: TextStyle(color: Colors.white, fontSize: 13),
                       ),
                     ),

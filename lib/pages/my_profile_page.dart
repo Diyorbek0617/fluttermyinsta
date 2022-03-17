@@ -134,9 +134,9 @@ class _My_profile_pageState extends State<My_profile_page> {
       count_posts =items.length;
     });
   }
-  _actionlogout(){
-    var result =Utils.dialogCommon(context, "Instagram", "Do you want to log out?", false);
-    if(result!=null){
+  _actionlogout()async{
+    var result =await Utils.dialogCommon(context, "Instagram", "Do you want to log out?", false);
+    if(result!=null&&result){
       AuthService.signOutUser(context);
     }
 
