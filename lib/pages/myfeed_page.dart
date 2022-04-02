@@ -1,23 +1,29 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:fluttermyinsta/model/post_model.dart';
+import 'package:fluttermyinsta/pages/someone_profile_page.dart';
 import 'package:fluttermyinsta/services/data_service.dart';
 import 'package:fluttermyinsta/services/untills.dart';
+import 'package:share/share.dart';
 
 class Myfeed_page extends StatefulWidget {
-  // const Myfeed_page({Key key}) : super(key: key);
-  static final String id = "myfeed_page";
+  static const String id = "myfeed_page";
   PageController pageController;
-  Myfeed_page({this.pageController});
+  Myfeed_page({ Key? key, required this.pageController}) : super(key: key);
   @override
   _Myfeed_pageState createState() => _Myfeed_pageState();
 }
 
 class _Myfeed_pageState extends State<Myfeed_page> {
-  List<Post> items = new List();
+  List<Post> items = [];
   bool isloading = false;
+  //load feed
   void _apiloadfeeds() {
+    setState(() {
+      isloading = true;
+    });
     DataService.loadFeeds().then((value) => {
           _resloadfeed(value),
         });
@@ -25,10 +31,11 @@ class _Myfeed_pageState extends State<Myfeed_page> {
 
   void _resloadfeed(List<Post> posts) {
     setState(() {
+      isloading = false;
       items = posts;
     });
   }
-
+ //like post
   void _apipostlike(Post post) async {
     setState(() {
       isloading = true;
@@ -39,7 +46,7 @@ class _Myfeed_pageState extends State<Myfeed_page> {
       post.liked = true;
     });
   }
-
+//inlike post
   void _apipostunlike(Post post) async {
     setState(() {
       isloading = true;
@@ -50,6 +57,7 @@ class _Myfeed_pageState extends State<Myfeed_page> {
       post.liked = false;
     });
   }
+  //remove post
   _actionremovepost(Post post)async{
     var result =await Utils.dialogCommon(context, "Instagram", "Do you want to remove this post?", false);
     if(result!=null&& result){
@@ -72,7 +80,7 @@ class _Myfeed_pageState extends State<Myfeed_page> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text(
+        title: const Text(
           "Instagram",
           style: TextStyle(
             fontFamily: "Billabong",
@@ -83,98 +91,130 @@ class _Myfeed_pageState extends State<Myfeed_page> {
         centerTitle: true,
         elevation: 0,
         actions: [
+          //navigate=> createpost page
           IconButton(
             onPressed: () {
               widget.pageController.animateToPage(2,
-                  duration: Duration(milliseconds: 200), curve: Curves.easeIn);
+                  duration: const Duration(milliseconds: 200), curve: Curves.easeIn);
             },
-            icon: Icon(Icons.camera_alt),
-            color: Color.fromRGBO(251, 175, 69, 1),
+            icon: const Icon(Icons.camera_alt),
+            color: const Color.fromRGBO(251, 175, 69, 1),
           ),
         ],
       ),
+      // body: listview
       body: Stack(
         children: [
-          items.length > 0
+          items.isNotEmpty
               ? ListView.builder(
                   itemCount: items.length,
                   itemBuilder: (context, index) {
-                    return _itemsofPost(items[
-                        index]);
+                    return _itemsofPost(items[index]);
                   },
                 )
-              : Center(
+              : const Center(
                   child: Text("No feeds",style: TextStyle(color: Colors.black26),),
                 ),
           isloading
-              ? Center(
+              ? const Center(
                   child: CircularProgressIndicator(),
                 )
-              : SizedBox.shrink(),
+              : const SizedBox.shrink(),
         ],
       ),
     );
   }
+// body: widget
+  Widget _itemsofPost(Post? post) {
 
-  Widget _itemsofPost(Post post) {
     return Container(
-      margin: EdgeInsets.only(bottom: 1),
+      margin: const EdgeInsets.only(bottom: 1),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Divider(),
+         const Divider(),
           Container(
-              padding: EdgeInsets.all(10),
+              padding:const EdgeInsets.all(10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(40),
-                        child: Image(
-                          image: AssetImage("assets/images/ic_person.png"),
-                          height: 40,
-                          width: 40,
-                          fit: BoxFit.cover,
+                      GestureDetector(
+                        // navigate someoneprofile page
+                        onTap: () {
+                           if (post?.mine == false) {
+                             Navigator.push(
+                               context,
+                               MaterialPageRoute(
+                                 builder: (context) => SomeoneProfilePage(uid:post?.uid,),
+                               ),
+                             );
+                             if (kDebugMode) {
+                               print(post?.uid.toString());
+                             }
+                           }
+                        },
+                        // user image
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(40),
+                          child: post?.img_user == null || post!.img_user.isEmpty
+                              ? const Image(
+                            image:
+                            AssetImage("assets/images/ic_person.png"),
+                            width: 40,
+                            height: 40,
+                            fit: BoxFit.cover,
+                          )
+                              : Image.network(
+                            post.img_user,
+                            width: 40,
+                            height: 40,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // fullname text
                           Text(
-                            post.fullname,
-                            style: TextStyle(
+                            post!.fullname,
+                            style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black),
                           ),
+                          //date
                           Text(
-                            post.date,
-                            style: TextStyle(fontWeight: FontWeight.normal),
+                            post.date!,
+                            style:const TextStyle(fontWeight: FontWeight.normal),
                           )
                         ],
                       )
                     ],
-                  ),post.mine?
+                    // more button
+                  ),
+                  post.mine?
                   IconButton(
                     icon: const Icon(SimpleLineIcons.options),
                     onPressed: () {
                       _actionremovepost(post);
                     },
-                  ):SizedBox.shrink(),
+                  ):const SizedBox.shrink(),
                 ],
               )),
+          //post image
           Center(
             child: CachedNetworkImage(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.width,
               imageUrl: post.img_post,
               placeholder: (context, url) =>
-                  Center(child: CircularProgressIndicator()),
-              errorWidget: (context, url, error) => Icon(Icons.error),
+                  const Center(child: CircularProgressIndicator()),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
               fit: BoxFit.cover,
             ),
           ),
@@ -183,6 +223,7 @@ class _Myfeed_pageState extends State<Myfeed_page> {
             children: [
               Row(
                 children: [
+                  // like button
                   IconButton(
                     onPressed: () {
                       if (!post.liked) {
@@ -192,27 +233,31 @@ class _Myfeed_pageState extends State<Myfeed_page> {
                       }
                     },
                     icon: post.liked
-                        ? Icon(
+                        ? const Icon(
                             Icons.favorite,
                             color: Colors.red,
                           )
-                        : Icon(
+                        : const Icon(
                             Icons.favorite_border,
                           ),
                   ),
+                  //share
                   IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.share_outlined),
+                    onPressed: () {
+                      Share.share('Image: ${post.img_post} \n Caption: ${post.caption}');
+                    },
+                    icon: const Icon(Icons.share_outlined),
                   ),
                 ],
               ),
             ],
           ),
+          // post caption
           Container(
-            padding: EdgeInsets.only(left: 8.0),
+            padding: const EdgeInsets.only(left: 8.0),
             child: Text(
               post.caption,
-              style: TextStyle(
+              style: const TextStyle(
                   color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15),
             ),
           ),

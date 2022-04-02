@@ -1,17 +1,19 @@
+import 'package:fluttermyinsta/model/user_model.dart';
+
 class Post {
-  String uid = '';
+  String? uid = '';
   String fullname = '';
   String img_user = '';
   String id = '';
   String img_post = '';
   String caption = '';
   bool liked = false;
-  String date;
+  String? date;
   bool mine = false;
 
   Post({
-    this.img_post,
-    this.caption,
+    required this.img_post,
+    required this.caption,
   });
 
   Post.fromJson(Map<String, dynamic> json)
@@ -34,4 +36,10 @@ class Post {
         'caption': caption,
         'liked': liked,
       };
+  @override
+  bool operator ==(Object other) {
+    return (other is User) && other.uid == uid;
+  }
+  @override
+  int get hashCode => uid.hashCode;
 }

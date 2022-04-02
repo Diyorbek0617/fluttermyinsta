@@ -9,7 +9,7 @@ import 'package:fluttermyinsta/services/prefs_service.dart';
 import 'package:fluttermyinsta/services/untills.dart';
 
 class Signup_page extends StatefulWidget {
-  const Signup_page({Key key}) : super(key: key);
+//  const Signup_page({required Key key}) : super(key: key);
   static const String id = "signup_page";
 
   @override
@@ -22,6 +22,7 @@ class _Signup_pageState extends State<Signup_page> {
   var emailcontroller = TextEditingController();
   var passwordcontroller = TextEditingController();
   var confirmcontroller = TextEditingController();
+  // sign up
   _dosign_up() {
     String name = fullnamecontroller.text.toString().trim();
     String email = emailcontroller.text.toString().trim();
@@ -49,10 +50,8 @@ class _Signup_pageState extends State<Signup_page> {
         });
   }
 
+  // check firebase user
   _getfirebaseUser(User user, Map<String, FirebaseUser> map) async {
-    setState(() {
-      isloading = false;
-    });
     FirebaseUser firebaseUser;
     if (!map.containsKey("SUCCES")) {
       if (map.containsKey("ERROR_EMAIL_ALREADY_IN_USE")) {
@@ -62,15 +61,21 @@ class _Signup_pageState extends State<Signup_page> {
         Utils.fireToast("Try again later");
       }
     }
-       firebaseUser =map["SUCCESS"];
+    firebaseUser = map["SUCCESS"]!;
     if (firebaseUser != null) {
       print(map);
-      await  Prefs.saveUserId(firebaseUser.uid);
+      await Prefs.saveUserId(firebaseUser.uid);
       DataService.storeUser(user).then((value) => {
             Navigator.pushReplacementNamed(context, Home_page.id),
+            setState(() {
+              isloading = false;
+            }),
           });
     } else {
       Utils.fireToast("Check your information");
+      setState(() {
+        isloading = false;
+      });
     }
   }
 
@@ -151,6 +156,7 @@ class _Signup_pageState extends State<Signup_page> {
                           padding: const EdgeInsets.only(left: 20, right: 20),
                           child: TextField(
                             controller: emailcontroller,
+                            keyboardType: TextInputType.emailAddress,
                             style: const TextStyle(color: Colors.white),
                             decoration: const InputDecoration(
                               hintText: "Email",
@@ -177,6 +183,7 @@ class _Signup_pageState extends State<Signup_page> {
                           padding: const EdgeInsets.only(left: 20, right: 20),
                           child: TextField(
                             controller: passwordcontroller,
+                            keyboardType: TextInputType.visiblePassword,
                             style: const TextStyle(color: Colors.white),
                             decoration: const InputDecoration(
                               hintText: "Password",
@@ -203,6 +210,7 @@ class _Signup_pageState extends State<Signup_page> {
                           padding: const EdgeInsets.only(left: 20, right: 20),
                           child: TextField(
                             controller: confirmcontroller,
+                            keyboardType: TextInputType.visiblePassword,
                             style: const TextStyle(color: Colors.white),
                             decoration: const InputDecoration(
                               hintText: "Confirm Password",

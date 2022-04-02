@@ -2,21 +2,23 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:fluttermyinsta/model/post_model.dart';
+import 'package:fluttermyinsta/pages/someone_profile_page.dart';
 import 'package:fluttermyinsta/services/data_service.dart';
 import 'package:fluttermyinsta/services/untills.dart';
+import 'package:share/share.dart';
 
 class My_likes_page extends StatefulWidget {
-  const My_likes_page({Key key}) : super(key: key);
-  static final String id = "my_likes_page";
+  const My_likes_page({ Key? key}) : super(key: key);
+  static const String id = "my_likes_page";
 
   @override
   _My_likes_pageState createState() => _My_likes_pageState();
 }
 
 class _My_likes_pageState extends State<My_likes_page> {
-  List<Post> items = new List();
+  List<Post> items = [];
   bool isloading = false;
-
+  // load likes
   void _apiloadLikes() {
     setState(() {
       isloading = true;
@@ -32,24 +34,30 @@ class _My_likes_pageState extends State<My_likes_page> {
       isloading = false;
     });
   }
+
+//  unlike post
   void _apipostunlike(Post post) async {
     setState(() {
       isloading = true;
       post.liked = false;
     });
     await DataService.likePost(post, false);
-   _apiloadLikes();
+    _apiloadLikes();
   }
-  _actionremovepost(Post post)async{
-    var result =await Utils.dialogCommon(context, "Instagram", "Do you want to remove this post?", false);
-    if(result!=null&&result){
+
+// remove post
+  _actionremovepost(Post post) async {
+    var result = await Utils.dialogCommon(
+        context, "Instagram", "Do you want to remove this post?", false);
+    if (result != null && result) {
       setState(() {
-        isloading=true;
+        isloading = true;
       });
       DataService.removePost(post).then((value) => {
-        _apiloadLikes(),
-      });
-    }}
+            _apiloadLikes(),
+          });
+    }
+  }
 
   @override
   void initState() {
@@ -63,7 +71,7 @@ class _My_likes_pageState extends State<My_likes_page> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text(
+        title: const Text(
           "Likes",
           style: TextStyle(
             fontFamily: "Billabong",
@@ -74,85 +82,126 @@ class _My_likes_pageState extends State<My_likes_page> {
         centerTitle: true,
         elevation: 0,
       ),
+      // body: listview
       body: Stack(
         children: [
-          items.length > 0
+          items.isNotEmpty
               ? ListView.builder(
                   itemCount: items.length,
                   itemBuilder: (context, index) {
                     return _itemsofPost(items[index]);
                   },
                 )
-              : Center(
-                  child: Text("No liked posts",style: TextStyle(color: Colors.black26),),
+              : const Center(
+                  child: Text(
+                    "No liked posts",
+                    style: TextStyle(color: Colors.black26),
+                  ),
                 ),
           isloading
-              ? Center(
+              ? const Center(
                   child: CircularProgressIndicator(),
                 )
-              : SizedBox.shrink(),
+              : const SizedBox.shrink(),
         ],
       ),
     );
   }
 
+  // body: widget
   Widget _itemsofPost(Post post) {
     return Container(
-      margin: EdgeInsets.only(bottom: 1),
+      margin: const EdgeInsets.only(bottom: 1),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Divider(),
+          const Divider(),
+          // Profile information
           Container(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  // Profile information
                   Row(
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(40),
-                        child: Image(
-                          image: AssetImage("assets/images/ic_person.png"),
-                          height: 40,
-                          width: 40,
-                          fit: BoxFit.cover,
+                      // Profile image
+                      GestureDetector(
+                        onTap: () {
+                          if (post.mine == false) {
+                            // someone profile navigate
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SomeoneProfilePage(
+                                  uid: post.uid,
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                        // user image
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(40),
+                          child: post.img_user == null || post.img_user.isEmpty
+                              ? const Image(
+                                  image:
+                                      AssetImage("assets/images/ic_person.png"),
+                                  width: 40,
+                                  height: 40,
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.network(
+                                  post.img_user,
+                                  width: 40,
+                                  height: 40,
+                                  fit: BoxFit.cover,
+                                ),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 10,
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // user name
                           Text(
                             post.fullname,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black),
                           ),
+                          // post time
                           Text(
-                            post.date,
-                            style: TextStyle(fontWeight: FontWeight.normal),
+                            post.date!,
+                            style:
+                                const TextStyle(fontWeight: FontWeight.normal),
                           )
                         ],
                       )
                     ],
-                  ), post.mine?
-                  IconButton(
-                    icon: const Icon(SimpleLineIcons.options),
-                    onPressed: () {
-                      _actionremovepost(post);
-                    },
-                  ):SizedBox.shrink(),
+                  ),
+                  //more button
+                  post.mine
+                      ? IconButton(
+                          icon: const Icon(SimpleLineIcons.options),
+                          onPressed: () {
+                            _actionremovepost(post);
+                          },
+                        )
+                      : const SizedBox.shrink(),
                 ],
               )),
-          // Image.network(post.postImage,fit: BoxFit.cover,),
-          Center(
+          // post image
+          SizedBox(
+            width: MediaQuery.of(context).size.width,
             child: CachedNetworkImage(
               imageUrl: post.img_post,
-              placeholder: (context, url) => CircularProgressIndicator(),
-              errorWidget: (context, url, error) => Icon(Icons.error),
+              placeholder: (context, url) =>
+                  const Center(child: CircularProgressIndicator()),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
+              fit: BoxFit.cover,
             ),
           ),
           Row(
@@ -166,29 +215,37 @@ class _My_likes_pageState extends State<My_likes_page> {
                         _apipostunlike(post);
                       }
                     },
+                    // post like
                     icon: post.liked
-                        ? Icon(
+                        ? const Icon(
                             Icons.favorite,
                             color: Colors.red,
                           )
-                        : Icon(
+                        : const Icon(
                             Icons.favorite_border,
                           ),
                   ),
+                  // post share
                   IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.share),
+                    onPressed: () {
+                      Share.share(
+                          'Image: ${post.img_post} \n Caption: ${post.caption}');
+                    },
+                    icon: const Icon(Icons.share),
                   ),
                 ],
               ),
             ],
           ),
+          // post caption
           Container(
-            padding: EdgeInsets.only(left: 8.0),
+            padding: const EdgeInsets.only(left: 8.0),
             child: Text(
               post.caption,
-              style: TextStyle(
-                  color: Colors.black, fontWeight: FontWeight.bold, fontSize: 15),
+              style: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15),
             ),
           ),
         ],

@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttermyinsta/pages/my_likes_page.dart';
@@ -5,34 +6,54 @@ import 'package:fluttermyinsta/pages/my_profile_page.dart';
 import 'package:fluttermyinsta/pages/myfeed_page.dart';
 import 'package:fluttermyinsta/pages/mysearch_page.dart';
 import 'package:fluttermyinsta/pages/myupload_page.dart';
+import 'package:fluttermyinsta/services/untills.dart';
 
 class Home_page extends StatefulWidget {
-  Home_page({Key key}) : super(key: key);
-  static final String id = "home_page";
+ // const Home_page({required Key? key}) : super(key: key);
+  static const String id = "home_page";
 
   @override
   _Home_pageState createState() => _Home_pageState();
 }
 
 class _Home_pageState extends State<Home_page> {
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   int _cureenttab = 0;
-  PageController _pageController;
+  late PageController _pageController;
+
+  // nitication of local
+  _initNotification() {
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        print("onMessage: $message");
+        Utils.showLocalNotification(message);
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        //print("onLaunch: $message");
+      },
+      onResume: (Map<String, dynamic> message) async {
+        //print("onResume: $message");
+      },
+    );
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _initNotification();
     _pageController = PageController();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      //pageview
       body: PageView(
         controller: _pageController,
         children: [
           Myfeed_page(pageController: _pageController),
-           Mysearch_page(),
+          Mysearch_page(),
           Myupoad_page(pageController: _pageController),
           My_likes_page(),
           My_profile_page(),
@@ -43,19 +64,21 @@ class _Home_pageState extends State<Home_page> {
           });
         },
       ),
+      //bottomnavigationbar type of footer
       bottomNavigationBar: CupertinoTabBar(
         inactiveColor: Colors.white,
-        backgroundColor: Color.fromRGBO(252, 175, 69, 1),
+        backgroundColor: const Color.fromRGBO(252, 175, 69, 1),
         onTap: (int index) {
           setState(() {
             _cureenttab = index;
             _pageController.animateToPage(index,
-                duration: Duration(milliseconds: 200), curve: Curves.easeIn);
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeIn);
           });
         },
         activeColor: Colors.deepOrange,
         currentIndex: _cureenttab,
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(
               Icons.home,

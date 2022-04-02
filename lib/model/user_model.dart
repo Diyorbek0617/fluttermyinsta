@@ -1,6 +1,8 @@
-// ignore_for_file: non_constant_identifier_names
 
 class User {
+  @override
+  int get hashCode => uid.hashCode;
+
   String uid = "";
   String password = "";
   String img_url = "";
@@ -14,7 +16,7 @@ class User {
   String device_type = "";
   String device_token = "";
 
-  User({this.fullname, this.email, this.password});
+  User({required this.fullname, required this.email, required this.password});
 
   User.fromJson(Map<String, dynamic> json)
       : uid = json["uid"],
@@ -41,4 +43,7 @@ class User {
   bool operator ==(other) {
     return (other is User) && other.uid == uid;
   }
+
+
 }
+
