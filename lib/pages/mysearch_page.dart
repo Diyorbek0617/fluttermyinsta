@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fluttermyinsta/model/post_model.dart';
 import 'package:fluttermyinsta/model/user_model.dart';
 import 'package:fluttermyinsta/pages/someone_profile_page.dart';
 import 'package:fluttermyinsta/services/data_service.dart';
@@ -65,7 +64,13 @@ class _Mysearch_pageState extends State<Mysearch_page> {
     super.initState();
     _apisearchuser("");
   }
+@override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _apisearchuser(searchcontroller.text);
 
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -140,41 +145,30 @@ class _Mysearch_pageState extends State<Mysearch_page> {
       height: 90,
       child: Row(
         children: [
-          // navigate=>someoneprofile
-          GestureDetector(
-            onTap: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => SomeoneProfilePage(uid: post.uid,),
-              //   ),
-              // );
-            },
-            child: Container(
-              padding: const EdgeInsets.all(2),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(70),
-                  border: Border.all(
-                    width: 1.5,
-                    color: const Color.fromRGBO(192, 53, 132, 1),
-                  )),
-              // user image
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(40),
-                child: user.img_url.isEmpty
-                    ? const Image(
-                        image: AssetImage("assets/images/ic_person.png"),
-                        height: 40,
-                        width: 40,
-                        fit: BoxFit.cover,
-                      )
-                    : Image.network(
-                        user.img_url,
-                        width: 40,
-                        height: 40,
-                        fit: BoxFit.cover,
-                      ),
-              ),
+          Container(
+            padding: const EdgeInsets.all(2),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(70),
+                border: Border.all(
+                  width: 1.5,
+                  color: const Color.fromRGBO(192, 53, 132, 1),
+                )),
+            // user image
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(40),
+              child: user.img_url.isEmpty
+                  ? const Image(
+                      image: AssetImage("assets/images/ic_person.png"),
+                      height: 40,
+                      width: 40,
+                      fit: BoxFit.cover,
+                    )
+                  : Image.network(
+                      user.img_url,
+                      width: 40,
+                      height: 40,
+                      fit: BoxFit.cover,
+                    ),
             ),
           ),
           const SizedBox(

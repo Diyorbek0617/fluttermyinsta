@@ -1,3 +1,5 @@
+// ignore_for_file: import_of_legacy_library_into_null_safe
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +62,7 @@ class _Myfeed_pageState extends State<Myfeed_page> {
   //remove post
   _actionremovepost(Post post)async{
     var result =await Utils.dialogCommon(context, "Instagram", "Do you want to remove this post?", false);
-    if(result!=null&& result){
+    if(result){
       setState(() {
         isloading=true;
       });
@@ -125,7 +127,7 @@ class _Myfeed_pageState extends State<Myfeed_page> {
     );
   }
 // body: widget
-  Widget _itemsofPost(Post? post) {
+  Widget _itemsofPost(Post post) {
 
     return Container(
       margin: const EdgeInsets.only(bottom: 1),
@@ -143,22 +145,23 @@ class _Myfeed_pageState extends State<Myfeed_page> {
                       GestureDetector(
                         // navigate someoneprofile page
                         onTap: () {
-                           if (post?.mine == false) {
+                           if (post.mine == false) {
                              Navigator.push(
                                context,
                                MaterialPageRoute(
-                                 builder: (context) => SomeoneProfilePage(uid:post?.uid,),
+                                 builder: (context) => SomeoneProfilePage(post:post),
                                ),
                              );
                              if (kDebugMode) {
-                               print(post?.uid.toString());
+
+                               print(post.uid.toString());
                              }
                            }
                         },
                         // user image
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(40),
-                          child: post?.img_user == null || post!.img_user.isEmpty
+                          child: post.img_user.isEmpty
                               ? const Image(
                             image:
                             AssetImage("assets/images/ic_person.png"),
@@ -182,7 +185,7 @@ class _Myfeed_pageState extends State<Myfeed_page> {
                         children: [
                           // fullname text
                           Text(
-                            post!.fullname,
+                            post.fullname,
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black),

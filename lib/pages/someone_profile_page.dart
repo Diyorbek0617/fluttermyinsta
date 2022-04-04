@@ -8,8 +8,8 @@ import 'package:fluttermyinsta/services/http_service.dart';
 class SomeoneProfilePage extends StatefulWidget {
   static const String id = 'someone_Profile_Page';
 
-   String? uid;
-   SomeoneProfilePage({Key? key, this.uid}) : super(key: key);
+   Post? post;
+   SomeoneProfilePage({Key? key, this.post}) : super(key: key);
 
   @override
   _SomeoneProfilePageState createState() => _SomeoneProfilePageState();
@@ -33,12 +33,12 @@ class _SomeoneProfilePageState extends State<SomeoneProfilePage> {
     _apiLoadPosts();
   }
 
-  _apiLoadUser() {
+  _apiLoadUser() async {
     setState(() {
       isLoading = true;
     });
 
-    DataService.loadUser(id: widget.uid).then((value) => {
+    await DataService.someOneLoadUser(id: widget.post!.uid).then((value) => {
           _showUserInfo(value),
         });
   }
@@ -56,7 +56,7 @@ class _SomeoneProfilePageState extends State<SomeoneProfilePage> {
   }
 
   _apiLoadPosts() {
-    DataService.loadPosts(id: widget.uid!)
+    DataService.loadPosts(id: widget.post!.uid)
         .then((value) => {_resLoadPosts(value)});
   }
 
@@ -214,7 +214,7 @@ class _SomeoneProfilePageState extends State<SomeoneProfilePage> {
                         ),
                         child: Center(
                           child: Text(
-                            someoneUser!.fallowed ? "Fallowing" : "Fallow",
+                            someoneUser != null ? (someoneUser!.fallowed ? "Fallowing" : "Fallow"): "Follow",
                             style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 15,

@@ -1,3 +1,4 @@
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttermyinsta/pages/home_page.dart';
@@ -41,6 +42,7 @@ class _Signin_pageState extends State<Signin_page> {
     }
     firebaseUser = map["SUCCESS"]!;
 
+    // ignore: unnecessary_null_comparison
     if (firebaseUser != null) {
       print(map);
       Navigator.pushReplacementNamed(context, Home_page.id);

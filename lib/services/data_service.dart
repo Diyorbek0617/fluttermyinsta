@@ -49,6 +49,27 @@ class DataService {
     return user;
   }
 
+  static Future<User> someOneLoadUser({ String? id}) async {
+    var value = await firestore.collection(folder_users).document(id!).get();
+    User user = User.fromJson(value.data);
+
+    var querySnapshot1 = await firestore
+        .collection(folder_users)
+        .document(id)
+        .collection(folder_followers)
+        .getDocuments();
+    user.fallowers_count = querySnapshot1.documents.length;
+
+    var querySnapshot2 = await firestore
+        .collection(folder_users)
+        .document(id)
+        .collection(folder_following)
+        .getDocuments();
+    user.fallowing_count = querySnapshot2.documents.length;
+
+    return user;
+  }
+
   static Future updateUser(User user) async {
     String uid = await Prefs.loadUserId();
     return firestore

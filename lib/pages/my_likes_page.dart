@@ -134,7 +134,7 @@ class _My_likes_pageState extends State<My_likes_page> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => SomeoneProfilePage(
-                                  uid: post.uid,
+                                  post: post,
                                 ),
                               ),
                             );

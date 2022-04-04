@@ -1,7 +1,7 @@
 import 'package:fluttermyinsta/model/user_model.dart';
 
 class Post {
-  String? uid = '';
+  String uid = '';
   String fullname = '';
   String img_user = '';
   String id = '';

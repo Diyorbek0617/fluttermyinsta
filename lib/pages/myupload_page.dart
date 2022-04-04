@@ -1,3 +1,5 @@
+// ignore_for_file: import_of_legacy_library_into_null_safe
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttermyinsta/model/post_model.dart';
@@ -192,7 +194,7 @@ class _Myupoad_pageState extends State<Myupoad_page> {
                                           ),
                                           onPressed: () {
                                             setState(() {
-                                              _image = null!;
+                                              _image = null;
                                             });
                                           }),
                                     ],
